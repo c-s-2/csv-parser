@@ -1,8 +1,25 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const csv = require('csvtojson');
+
+const csvFilePath = path.join(__dirname, '../data/MOCK_DATA.csv');
+const Template = require('./template.js');
+
 const app = express();
 
-app.get('/', function (req, res) {
-  res.send('Hello World');
+
+const converter = csv({ delimiter: ',' });
+let data;
+converter.fromFile(csvFilePath).then(response => {
+  data = response;
 });
 
-app.listen(3000);
+app.get('/', function (req, res) {
+  console.log(data);
+  res.send(Template(data));
+});
+
+app.listen(3000, () => {
+  console.log('Ready on http://locahost:3000');
+});
